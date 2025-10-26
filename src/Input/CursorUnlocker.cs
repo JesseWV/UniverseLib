@@ -59,7 +59,8 @@ namespace UniverseLib.Input
             while (true)
             {
                 yield return waitForEndOfFrame ??= new WaitForEndOfFrame();
-                if (UniversalUI.AnyUIShowing || !EventSystemHelper.lastEventSystem)
+                // Only update cursor when a UI is actually showing
+                if (UniversalUI.AnyUIShowing)
                     UpdateCursorControl();
             }
         }
@@ -81,14 +82,16 @@ namespace UniverseLib.Input
                     if (!ConfigManager.Disable_EventSystem_Override)
                         EventSystemHelper.EnableEventSystem();
                 }
-                else
+                else if (UniversalUI.AnyUIShowing)
                 {
+                    // Only restore cursor state if we're closing a UI
                     Cursor.lockState = lastLockMode;
                     Cursor.visible = lastVisibleState;
 
                     if (!ConfigManager.Disable_EventSystem_Override)
                         EventSystemHelper.ReleaseEventSystem();
                 }
+                // If no UI showing, don't touch cursor at all - let game manage it
 
                 currentlySettingCursor = false;
             }
