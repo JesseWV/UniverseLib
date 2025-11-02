@@ -533,8 +533,27 @@ namespace UniverseLib
         {
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
-                foreach (Type type in asm.GetTypes())
-                    TryCacheDeobfuscatedType(type);
+                Type[] types;
+                try
+                {
+                    types = asm.GetTypes();
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    // Some types failed to load - extract the ones that succeeded
+                    types = ReflectionUtility.TryExtractTypesFromException(ex);
+                }
+                catch
+                {
+                    // Complete failure - skip this assembly
+                    continue;
+                }
+
+                foreach (Type type in types)
+                {
+                    if (type != null)
+                        TryCacheDeobfuscatedType(type);
+                }
             }
         }
 
