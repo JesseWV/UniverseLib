@@ -351,3 +351,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# GitHub tokens and credentials
+*.token
+*.pat
+github_token*
+.github_*
